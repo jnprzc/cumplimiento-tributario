@@ -3,7 +3,9 @@
  */
 
 // URL de la API (cambiar cuando se despliegue en producción)
-const API_URL = 'http://localhost:8000';
+const API_URL = window.location.hostname === 'localhost'
+    ? 'http://localhost:8000'
+    : 'https://cumplimiento-tributario-production.up.railway.app';
 
 // Elementos del DOM
 const consultaForm = document.getElementById('consultaForm');

@@ -6,7 +6,7 @@ const CONFIG = {
     // URLs de la API
     API_URL: window.location.hostname === 'localhost' 
         ? 'http://localhost:8000' 
-        : 'https://api.tu-dominio.com', // Cambiar en producción
+        : 'https://cumplimiento-tributario-production.up.railway.app',
     
     // Información de la empresa
     EMPRESA: {
