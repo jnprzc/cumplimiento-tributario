@@ -58,7 +58,7 @@ def consultar_rues(nit: str) -> dict:
     Consulta información de una empresa en el RUES
     """
     # Importar base de datos de ejemplo
-    from datos_empresas_ejemplo import obtener_empresa
+    from backend.datos_empresas_ejemplo import obtener_empresa
     
     # Intentar obtener de base de datos de ejemplo
     empresa = obtener_empresa(nit)
