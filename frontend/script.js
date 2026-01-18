@@ -118,9 +118,14 @@ function formatearNIT(nit) {
  * Mostrar información de la empresa
  */
 function mostrarEmpresa(datos) {
-    const { nit, razon_social, estado, municipio, departamento, actividad_principal, fecha_matricula, ultima_renovacion } = datos;
+    const { 
+        nit, razon_social, estado, municipio, departamento, 
+        actividad_principal, codigo_ciiu, fecha_matricula, 
+        ultima_renovacion, tipo_sociedad, camara, tamano, 
+        empleados_rango, responsabilidades_tributarias 
+    } = datos;
     
-    empresaInfo.innerHTML = `
+    let html = `
         <div class="info-row">
             <span class="info-label">NIT:</span>
             <span class="info-value">${formatearNIT(nit)}</span>
@@ -141,6 +146,50 @@ function mostrarEmpresa(datos) {
             <span class="info-label">Actividad Principal:</span>
             <span class="info-value">${actividad_principal}</span>
         </div>
+    `;
+    
+    // Agregar información adicional si existe
+    if (codigo_ciiu && codigo_ciiu !== 'N/A') {
+        html += `
+            <div class="info-row">
+                <span class="info-label">Código CIIU:</span>
+                <span class="info-value">${codigo_ciiu}</span>
+            </div>
+        `;
+    }
+    
+    if (tipo_sociedad) {
+        html += `
+            <div class="info-row">
+                <span class="info-label">Tipo de Sociedad:</span>
+                <span class="info-value">${tipo_sociedad}</span>
+            </div>
+        `;
+    }
+    
+    if (tamano) {
+        html += `
+            <div class="info-row">
+                <span class="info-label">Tamaño:</span>
+                <span class="info-value">${tamano}</span>
+            </div>
+        `;
+    }
+    
+    if (empleados_rango) {
+        html += `
+            <div class="info-row">
+                <span class="info-label">Empleados:</span>
+                <span class="info-value">${empleados_rango}</span>
+            </div>
+        `;
+    }
+    
+    html += `
+        <div class="info-row">
+            <span class="info-label">Cámara de Comercio:</span>
+            <span class="info-value">${camara || 'Por determinar'}</span>
+        </div>
         <div class="info-row">
             <span class="info-label">Fecha Matrícula:</span>
             <span class="info-value">${fecha_matricula}</span>
@@ -150,6 +199,22 @@ function mostrarEmpresa(datos) {
             <span class="info-value">${ultima_renovacion}</span>
         </div>
     `;
+    
+    // Mostrar responsabilidades tributarias si existen
+    if (responsabilidades_tributarias && responsabilidades_tributarias.length > 0) {
+        html += `
+            <div class="info-row responsabilidades-row">
+                <span class="info-label">Responsabilidades:</span>
+                <div class="responsabilidades-lista">
+                    ${responsabilidades_tributarias.map(resp => 
+                        `<span class="responsabilidad-badge">${resp}</span>`
+                    ).join('')}
+                </div>
+            </div>
+        `;
+    }
+    
+    empresaInfo.innerHTML = html;
 }
 
 /**
