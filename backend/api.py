@@ -265,7 +265,19 @@ async def test_consulta(nit: str):
             status_code=500,
             detail=f"Error: {str(e)}"
         )
+# Configuración para producción
+import os
 
+# Permitir CORS desde cualquier origen en producción
+# (En producción real, especificar dominios permitidos)
+if os.getenv("RAILWAY_ENVIRONMENT"):
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],  # Cambiar en producción a dominios específicos
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 # Punto de entrada
 if __name__ == "__main__":
     import uvicorn
