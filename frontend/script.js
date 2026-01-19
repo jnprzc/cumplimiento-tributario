@@ -217,6 +217,14 @@ function mostrarEmpresa(datos) {
     }
     
     empresaInfo.innerHTML = html;
+    
+    // Actualizar ICA dinámicamente
+    const icaTitulo = document.getElementById('icaTitulo');
+    const icaEstado = document.getElementById('icaEstado');
+    if (icaTitulo && icaEstado) {
+        icaTitulo.textContent = `ICA ${municipio}`;
+        icaEstado.textContent = `Por verificar con Alcaldía de ${municipio}`;
+    }
 }
 
 /**
