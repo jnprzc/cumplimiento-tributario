@@ -207,11 +207,6 @@ class ComplianceService:
                     'icono': '🕐',
                     'descripcion': f"Consulta Alcaldía de {empresa.datos_basicos.municipio}"
                 },
-                'ica_barranquilla': {
-                    'estado': 'Por verificar con Alcaldía',
-                    'icono': '🕐',
-                    'descripcion': f"Consulta Alcaldía de {empresa.datos_basicos.municipio}"
-                },
                 'renta': {
                     'estado': 'Por verificar en DIAN',
                     'icono': '🕐',
