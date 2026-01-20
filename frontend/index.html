@@ -57,21 +57,46 @@
                 <h2>🗺️ Mapa de Cumplimiento Tributario</h2>
                 
                 <!-- Score -->
-                <div class="score-container">
+                <div class="score-display">
                     <div class="score-circle">
-                        <span id="scoreValue">0</span>
-                        <span class="score-total">/100</span>
+                        <svg viewBox="0 0 200 200">
+                            <defs>
+                                <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <!-- Círculo de fondo -->
+                             <circle class="score-circle-bg" cx="100" cy="100" r="90"></circle>
+                            <!-- Círculo de progreso -->
+                            <circle 
+                                id="scoreProgress"
+                                class="score-circle-progress" 
+                                cx="100" 
+                                cy="100" 
+                                r="90"
+                                stroke-dasharray="565.48"
+                                stroke-dashoffset="565.48">
+                            </circle>
+                          </svg>
+                          <div class="score-text">
+                            <div class="score-number">
+                                <span id="scoreValue">0</span><span class="score-total">/100</span>
+                            </div>
+                            <span class="score-label-new" id="nivelBadgeText">Calculando...</span>
+                        </div>
                     </div>
-                    <p class="score-label">Score de Cumplimiento</p>
+                    <div id="nivelBadge"></div>
                 </div>
 
+
                 <!-- Estado Matrícula -->
-                <div class="obligacion-item">
-                    <div class="obligacion-header">
-                        <span class="obligacion-icon" id="matriculaIcon">⚪</span>
-                        <span class="obligacion-titulo">Matrícula Mercantil</span>
+                <div class="estado-activo" id="matriculaCard">
+                    <span class="obligacion-icon" id="matriculaIcon">✅</span>
+                    <div style="flex: 1;">
+                        <div class="obligacion-titulo">Matrícula Mercantil</div>
+                        <div class="obligacion-estado" id="matriculaEstado">ACTIVA</div>
                     </div>
-                    <span class="obligacion-estado" id="matriculaEstado">-</span>
                 </div>
 
                 <!-- Obligaciones Tributarias -->
