@@ -246,9 +246,19 @@ function mostrarMapaCumplimiento(mapa) {
 }
 
 /**
- * Animar el score
+ * Animar el score y el círculo de progreso
  */
 function animarScore(targetScore) {
+    const circleProgress = document.getElementById('scoreProgress');
+    const nivelBadge = document.getElementById('nivelBadge');
+    const nivelText = document.getElementById('nivelBadgeText');
+    
+    // Calcular el porcentaje y el offset del círculo
+    const radius = 90;
+    const circumference = 2 * Math.PI * radius; // 565.48
+    const percentage = targetScore / 100;
+    const offset = circumference - (percentage * circumference);
+    
     let currentScore = 0;
     const increment = targetScore / 30; // 30 frames para la animación
     
@@ -260,8 +270,31 @@ function animarScore(targetScore) {
             clearInterval(interval);
         }
         
+        // Actualizar número
         scoreValue.textContent = Math.round(currentScore);
+        
+        // Actualizar círculo de progreso
+        const currentOffset = circumference - ((currentScore / 100) * circumference);
+        circleProgress.style.strokeDashoffset = currentOffset;
+        
     }, 30);
+    
+    // Determinar nivel y color
+    let nivel, claseNivel;
+    if (targetScore >= 80) {
+        nivel = 'Premium';
+        claseNivel = 'nivel-premium';
+    } else if (targetScore >= 50) {
+        nivel = 'Confiable';
+        claseNivel = 'nivel-confiable';
+    } else {
+        nivel = 'Básico';
+        claseNivel = 'nivel-basico';
+    }
+    
+    // Actualizar badges
+    nivelText.textContent = nivel;
+    nivelBadge.innerHTML = `<span class="nivel-badge ${claseNivel}">${nivel}</span>`;
 }
 
 /**
