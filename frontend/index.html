@@ -168,13 +168,199 @@
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>Desarrollado por <strong>Corenta</strong> • Sistema de Autodiagnóstico Tributario</p>
-            <p class="footer-note">Versión MVP - Los datos mostrados son preliminares</p>
+    <!-- Footer con Avisos Legales -->
+    <footer class="footer-legal">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>📊 Metodología de Score</h4>
+                <p>
+                    Nuestro score (0-100 puntos) es una <strong>metodología propia de Corenta</strong> 
+                    que evalúa el cumplimiento tributario basándose en señales verificables de 
+                    fuentes oficiales. <a href="#metodologia" class="footer-link">Ver detalles</a>
+                </p>
+            </div>
+            
+            <div class="footer-section">
+                <h4>🔍 Fuentes de Información</h4>
+                <p>
+                    Información consolidada de fuentes públicas oficiales: 
+                    <strong>RUES, DIAN, Cámaras de Comercio, Secretarías de Hacienda Municipales</strong>. 
+                    Los datos mostrados son de carácter público y se obtienen mediante consultas 
+                    automatizadas a bases de datos gubernamentales.
+                </p>
+            </div>
+            
+            <div class="footer-section">
+                <h4>🔒 Privacidad y Protección de Datos</h4>
+                <p>
+                    Al usar este sistema, usted acepta nuestra 
+                    <a href="privacidad.html" class="footer-link" target="_blank">
+                        <strong>Política de Tratamiento de Datos Personales</strong>
+                    </a> 
+                    conforme a la Ley 1581 de 2012. No almacenamos información tributaria privada.
+                </p>
+            </div>
+            
+            <div class="footer-divider"></div>
+            
+            <div class="footer-bottom">
+                <p>
+                    Desarrollado por <strong>Corenta</strong> • Sistema de Autodiagnóstico Tributario
+                </p>
+                <p class="footer-disclaimer">
+                    Versión MVP - Los datos mostrados son preliminares y solo tienen fines informativos. 
+                    Para asesoría tributaria profesional, consulte con un contador público certificado.
+                </p>
+            </div>
         </div>
     </footer>
+
+    <!-- Modal de Metodología -->
+    <div id="metodologiaModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="modal-close" onclick="cerrarMetodologia()">&times;</span>
+            <h2>📊 Metodología de Score Corenta</h2>
+            
+            <div class="metodologia-intro">
+                <p>
+                    El <strong>Score de Cumplimiento Corenta</strong> es una métrica propietaria 
+                    (0-100 puntos) que mide el nivel de cumplimiento tributario y mercantil 
+                    de una empresa colombiana mediante la verificación automatizada de señales 
+                    en fuentes oficiales.
+                </p>
+            </div>
+
+            <h3>🎯 Señales Evaluadas (7 componentes)</h3>
+            
+            <table class="metodologia-tabla">
+                <thead>
+                    <tr>
+                        <th>Señal</th>
+                        <th>Puntos</th>
+                        <th>Fuente</th>
+                        <th>Criterio de Verificación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>✅ Matrícula Mercantil Activa</td>
+                        <td>20</td>
+                        <td>RUES</td>
+                        <td>Estado "ACTIVA" en registro mercantil</td>
+                    </tr>
+                    <tr>
+                        <td>🔄 Renovación Vigente</td>
+                        <td>15</td>
+                        <td>RUES</td>
+                        <td>Renovación en últimos 12 meses</td>
+                    </tr>
+                    <tr>
+                        <td>📏 Tamaño Empresarial</td>
+                        <td>0-20</td>
+                        <td>RUES</td>
+                        <td>Grande: 20, Mediana: 15, Pequeña: 10, Micro: 5</td>
+                    </tr>
+                    <tr>
+                        <td>📄 RUT Verificado</td>
+                        <td>15</td>
+                        <td>DIAN</td>
+                        <td>RUT activo con responsabilidades declaradas</td>
+                    </tr>
+                    <tr>
+                        <td>🏛️ ICA Vigente</td>
+                        <td>10</td>
+                        <td>Alcaldía</td>
+                        <td>Registro ICA activo en municipio de domicilio</td>
+                    </tr>
+                    <tr>
+                        <td>⚖️ Sin Sanciones</td>
+                        <td>10</td>
+                        <td>DIAN</td>
+                        <td>Ausencia de sanciones tributarias vigentes</td>
+                    </tr>
+                    <tr>
+                        <td>🌍 Comercio Exterior Activo</td>
+                        <td>10</td>
+                        <td>DIAN Aduana</td>
+                        <td>Registro importador/exportador con operaciones recientes</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>📈 Clasificación por Nivel</h3>
+            <div class="niveles-grid">
+                <div class="nivel-card premium">
+                    <h4>🏆 Premium</h4>
+                    <p class="puntos">80-100 puntos</p>
+                    <p class="descripcion">
+                        Cumplimiento excepcional. Empresa con todas las obligaciones al día 
+                        y señales positivas verificadas.
+                    </p>
+                </div>
+                
+                <div class="nivel-card confiable">
+                    <h4>✅ Confiable</h4>
+                    <p class="puntos">50-79 puntos</p>
+                    <p class="descripcion">
+                        Cumplimiento satisfactorio. Empresa con obligaciones básicas al día, 
+                        pero con áreas de mejora identificadas.
+                    </p>
+                </div>
+                
+                <div class="nivel-card basico">
+                    <h4>⚠️ Básico</h4>
+                    <p class="puntos">0-49 puntos</p>
+                    <p class="descripcion">
+                        Cumplimiento mínimo o insuficiente. Se requiere atención urgente 
+                        a obligaciones tributarias.
+                    </p>
+                </div>
+            </div>
+
+            <h3>🔬 Algoritmo de Cálculo</h3>
+            <div class="algoritmo-box">
+                <pre>
+    Score Total = Σ (Señal Activa × Peso Señal)
+
+    Donde:
+    - Señal Activa ∈ {0, 1} (binario: cumple o no cumple)
+    - Peso Señal = puntos asignados a cada señal
+    - Score Total ∈ [0, 100]
+
+    Ejemplo Bancolombia (NIT 890903938):
+    Matrícula Activa:     20 pts ✓
+    Renovación Vigente:   15 pts ✓
+    Tamaño Grande:        20 pts ✓
+    RUT Verificado:       15 pts ✓
+    ICA Vigente:           0 pts ✗ (pendiente)
+    Sin Sanciones:         0 pts ✗ (pendiente)
+    Comercio Exterior:    10 pts ✓ (importador activo)
+    ─────────────────────────────
+    TOTAL:                70 pts → Nivel: Confiable
+                </pre>
+            </div>
+
+            <h3>⚡ Actualización y Precisión</h3>
+            <p>
+                Las señales se verifican en tiempo real mediante consultas automatizadas 
+                a APIs oficiales. La frecuencia de actualización depende de la disponibilidad 
+                de cada fuente:
+            </p>
+            <ul>
+                <li><strong>RUES:</strong> Datos actualizados diariamente por las Cámaras de Comercio</li>
+                <li><strong>DIAN:</strong> Información tributaria con delay de hasta 48 horas</li>
+                <li><strong>Alcaldías:</strong> Actualización variable según municipio</li>
+            </ul>
+
+            <div class="metodologia-footer">
+                <p>
+                    <strong>Nota:</strong> Esta metodología es propiedad intelectual de Corenta 
+                    y está en constante evolución. La versión actual (v1.0) se basa en investigación 
+                    académica y mejores prácticas del sector contable colombiano.
+                </p>
+            </div>
+        </div>
+    </div>
 
     <script src="config.js"></script>
     <script src="script.js"></script>

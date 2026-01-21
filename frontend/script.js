@@ -429,5 +429,42 @@ async function verificarAPI() {
     }
 }
 
+/**
+ * Abrir modal de metodología
+ */
+function abrirMetodologia() {
+    const modal = document.getElementById('metodologiaModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('visible');
+}
+
+/**
+ * Cerrar modal de metodología
+ */
+function cerrarMetodologia() {
+    const modal = document.getElementById('metodologiaModal');
+    modal.classList.remove('visible');
+    modal.classList.add('hidden');
+}
+
+// Cerrar modal al hacer clic fuera
+window.onclick = function(event) {
+    const modal = document.getElementById('metodologiaModal');
+    if (event.target === modal) {
+        cerrarMetodologia();
+    }
+}
+
+// Event listener para el enlace de metodología
+document.addEventListener('DOMContentLoaded', () => {
+    const metodologiaLink = document.querySelector('a[href="#metodologia"]');
+    if (metodologiaLink) {
+        metodologiaLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            abrirMetodologia();
+        });
+    }
+});
+
 // Verificar API al cargar
 verificarAPI();
