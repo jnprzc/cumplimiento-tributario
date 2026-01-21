@@ -1,4 +1,7 @@
-/* Reset y Variables */
+/* ========================================
+   RESET Y VARIABLES
+   ======================================== */
+
 * {
     margin: 0;
     padding: 0;
@@ -25,12 +28,55 @@ body {
 }
 
 .container {
-    max-width: 800px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
-/* Header */
+/* Formulario de consulta más estrecho para legibilidad */
+.consulta-section .container {
+    max-width: 800px;
+}
+
+/* ========================================
+   TIPOGRAFÍA CONSISTENTE
+   ======================================== */
+
+/* Títulos principales de cards - H2 */
+.card-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 1.5rem 0;
+    line-height: 1.3;
+}
+
+/* Subtítulos dentro de cards - H3 */
+.subseccion-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #374151;
+    margin: 2rem 0 1rem 0;
+}
+
+/* Labels de información */
+.info-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6b7280;
+}
+
+/* Valores de información */
+.info-value {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: #1f2937;
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+
 header {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
     color: white;
@@ -48,18 +94,29 @@ header h1 {
     opacity: 0.9;
 }
 
-/* Main Content */
+/* ========================================
+   MAIN CONTENT
+   ======================================== */
+
 main {
     padding: 40px 20px;
 }
 
-/* Cards */
+/* ========================================
+   CARDS
+   ======================================== */
+
 .card {
     background: white;
     border-radius: 12px;
     padding: 30px;
     margin-bottom: 30px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
 .card h2 {
@@ -67,7 +124,18 @@ main {
     color: var(--text-dark);
 }
 
-/* Formulario de Consulta */
+/* Cards simétricas para layout de 2 columnas */
+.card-simetrica {
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+}
+
+/* ========================================
+   FORMULARIO DE CONSULTA
+   ======================================== */
+
 .consulta-section {
     margin-top: -40px;
 }
@@ -141,228 +209,112 @@ button:disabled {
     to { transform: rotate(360deg); }
 }
 
-/* Utilidades */
 .hidden {
     display: none !important;
 }
 
-/* Información de la Empresa */
-.empresa-info {
+/* ========================================
+   LAYOUT DE 2 COLUMNAS SIMÉTRICAS
+   ======================================== */
+
+.resultados-section {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.resultados-grid {
     display: grid;
-    gap: 15px;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    align-items: start;
+}
+
+/* ========================================
+   INFORMACIÓN DE LA EMPRESA
+   ======================================== */
+
+.empresa-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .info-row {
     display: flex;
     justify-content: space-between;
-    padding: 12px;
-    background: var(--bg-light);
-    border-radius: 6px;
+    align-items: baseline;
+    padding: 0.875rem 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.info-row:last-child {
+    border-bottom: none;
 }
 
 .info-label {
-    font-weight: 600;
-    color: var(--text-dark);
+    flex: 0 0 40%;
 }
 
 .info-value {
-    color: var(--text-light);
+    flex: 0 0 58%;
+    text-align: right;
 }
 
-/* Score de Cumplimiento */
-.score-container {
-    text-align: center;
-    margin: 30px 0;
-}
-
-.score-circle {
-    width: 150px;
-    height: 150px;
-    margin: 0 auto;
-    border-radius: 50%;
-    border: 8px solid var(--primary-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3rem;
-    font-weight: bold;
-    color: var(--primary-color);
-    position: relative;
-}
-
-.score-total {
-    font-size: 1.5rem;
-    color: var(--text-light);
-}
-
-.score-label {
-    margin-top: 15px;
-    font-weight: 600;
-    color: var(--text-dark);
-}
-
-/* Obligaciones */
-.subsection-title {
-    margin: 30px 0 15px 0;
-    font-size: 1.1rem;
-    color: var(--text-dark);
-}
-
-.obligacion-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    margin-bottom: 10px;
-}
-
-.obligacion-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.obligacion-icon {
-    font-size: 1.5rem;
-}
-
-.obligacion-titulo {
-    font-weight: 600;
-}
-
-.obligacion-estado {
-    color: var(--text-light);
-    font-size: 0.9rem;
-}
-
-/* Próximos Pasos */
-.pasos-lista {
-    padding-left: 25px;
-}
-
-.pasos-lista li {
-    margin-bottom: 12px;
-    padding-left: 10px;
-}
-
-/* Lead Card */
-.lead-card {
-    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-    border: 2px solid var(--primary-color);
-}
-
-/* Mensajes de Error */
-.error-message {
-    background: #fee2e2;
-    border: 1px solid var(--danger-color);
-    color: #991b1b;
-    padding: 15px;
-    border-radius: 8px;
-    margin: 20px 0;
-}
-
-/* Footer */
-footer {
-    background: var(--text-dark);
-    color: white;
-    text-align: center;
-    padding: 30px 20px;
-    margin-top: 60px;
-}
-
-.footer-note {
-    font-size: 0.9rem;
-    opacity: 0.7;
-    margin-top: 10px;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    header h1 {
-        font-size: 2rem;
-    }
-
-    .input-group {
-        flex-direction: column;
-    }
-
-    button {
-        width: 100%;
-        justify-content: center;
-    }
-
-    .score-circle {
-        width: 120px;
-        height: 120px;
-        font-size: 2.5rem;
-    }
-
-    .obligacion-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-}
-/* Responsabilidades tributarias */
+/* Responsabilidades en columna */
 .responsabilidades-row {
     flex-direction: column;
     align-items: flex-start;
 }
 
+.responsabilidades-row .info-label {
+    margin-bottom: 0.75rem;
+}
+
 .responsabilidades-lista {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 10px;
+    gap: 0.5rem;
+    width: 100%;
 }
 
 .responsabilidad-badge {
-    background: var(--primary-color);
-    color: white;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 500;
-}
-
-/* Mejorar info-row para acomodar más contenido */
-.info-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px;
-    background: var(--bg-light);
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    color: #1e40af;
+    padding: 0.4rem 0.75rem;
     border-radius: 6px;
-    gap: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    display: inline-block;
+    border: 1px solid #93c5fd;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
 }
 
-.info-row .info-value {
-    text-align: right;
-    max-width: 60%;
-}
-
-/* Responsive para responsabilidades */
-@media (max-width: 768px) {
-    .responsabilidades-lista {
-        width: 100%;
-    }
-    
-    .responsabilidad-badge {
-        font-size: 0.8rem;
-        padding: 5px 10px;
-    }
-}
 /* ========================================
-   MEJORAS ESTÉTICAS - SCORE DINÁMICO
+   SCORE DE CUMPLIMIENTO CON SVG
    ======================================== */
 
-/* Círculo de progreso mejorado */
+.score-display {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
 .score-circle {
     position: relative;
-    width: 200px;
-    height: 200px;
-    margin: 0 auto 2rem;
+    width: 170px;
+    height: 170px;
+    margin: 0 auto 1.5rem;
 }
 
 .score-circle svg {
@@ -394,7 +346,7 @@ footer {
 }
 
 .score-number {
-    font-size: 3.5rem;
+    font-size: 2.75rem;
     font-weight: 700;
     color: #2563eb;
     line-height: 1;
@@ -409,11 +361,11 @@ footer {
 .score-label-new {
     display: block;
     margin-top: 0.5rem;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: #6b7280;
-    font-weight: 500;
-    letter-spacing: 0.05em;
+    font-weight: 600;
     text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 /* Badge de nivel con colores dinámicos */
@@ -443,13 +395,51 @@ footer {
     color: #065f46;
 }
 
-/* Mejoras a las obligaciones */
+/* ========================================
+   OBLIGACIONES TRIBUTARIAS
+   ======================================== */
+
+/* Estado activo (matrícula) */
+.estado-activo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    border: 2px solid #10b981;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.estado-activo .obligacion-icon {
+    width: 40px;
+    height: 40px;
+    background: #10b981;
+    color: white;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+}
+
+.estado-activo .obligacion-titulo {
+    color: #065f46;
+    font-weight: 600;
+}
+
+.estado-activo .obligacion-estado {
+    color: #047857;
+    font-weight: 600;
+}
+
+/* Obligaciones pendientes */
 .obligacion-item {
     background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
     border: 1px solid #e5e7eb;
     border-radius: 12px;
-    padding: 1.25rem;
-    margin-bottom: 1rem;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
     transition: all 0.3s ease;
 }
 
@@ -462,14 +452,14 @@ footer {
 .obligacion-header {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
     margin-bottom: 0.5rem;
 }
 
 .obligacion-icon {
-    font-size: 1.5rem;
-    width: 40px;
-    height: 40px;
+    font-size: 1.25rem;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -478,62 +468,22 @@ footer {
 }
 
 .obligacion-titulo {
-    font-size: 1.1rem;
+    font-size: 0.9375rem;
     font-weight: 600;
     color: #1f2937;
     flex: 1;
 }
 
 .obligacion-estado {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: #6b7280;
-    padding-left: 56px;
+    padding-left: 48px;
 }
 
-/* Estado activo con check verde */
-.estado-activo {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 1.25rem;
-    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-    border: 2px solid #10b981;
-    border-radius: 12px;
-    margin-bottom: 2rem;
-}
+/* ========================================
+   PRÓXIMOS PASOS
+   ======================================== */
 
-.estado-activo .obligacion-icon {
-    background: #10b981;
-    color: white;
-    font-size: 1.75rem;
-}
-
-.estado-activo .obligacion-titulo {
-    color: #065f46;
-}
-
-.estado-activo .obligacion-estado {
-    color: #047857;
-    font-weight: 600;
-    padding-left: 0;
-}
-
-/* Badges de responsabilidades mejorados */
-.responsabilidad-badge {
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-    color: #1e40af;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    display: inline-block;
-    margin: 0.25rem;
-    border: 1px solid #93c5fd;
-    text-transform: uppercase;
-    letter-spacing: 0.025em;
-}
-
-/* Próximos pasos mejorados */
 .pasos-lista {
     list-style: none;
     padding: 0;
@@ -574,29 +524,40 @@ footer {
     font-size: 0.875rem;
 }
 
-/* Animación de entrada */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* ========================================
+   LEAD CARD
+   ======================================== */
+
+.lead-card {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 2px solid var(--primary-color);
 }
 
-.resultados-section {
-    animation: fadeInUp 0.6s ease-out;
+.lead-description {
+    color: var(--text-light);
+    margin-bottom: 20px;
 }
 
-/* Sombras sutiles */
-.card {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.06);
+.lead-form {
+    display: flex;
+    gap: 10px;
 }
 
-.card:hover {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+.lead-input {
+    flex: 1;
+}
+
+/* ========================================
+   MENSAJES DE ERROR
+   ======================================== */
+
+.error-message {
+    background: #fee2e2;
+    border: 1px solid var(--danger-color);
+    color: #991b1b;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
 }
 
 /* ========================================
@@ -611,7 +572,7 @@ footer {
 }
 
 .footer-content {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
 }
 
@@ -690,10 +651,6 @@ footer {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
     overflow-y: auto;
-}
-
-.modal.hidden {
-    display: none;
 }
 
 .modal.visible {
@@ -828,4 +785,153 @@ footer {
     margin: 0;
     font-size: 0.875rem;
     color: #4b5563;
+}
+
+/* ========================================
+   RESPONSIVE: MOBILE
+   ======================================== */
+
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+
+    .input-group {
+        flex-direction: column;
+    }
+
+    button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Volver a layout de 1 columna */
+    .resultados-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    /* Quitar altura mínima en móvil */
+    .card-simetrica {
+        min-height: auto;
+    }
+    
+    /* Restaurar tamaños originales */
+    .score-circle {
+        width: 200px !important;
+        height: 200px !important;
+    }
+    
+    .score-number {
+        font-size: 3.5rem !important;
+    }
+    
+    .score-total {
+        font-size: 1.75rem !important;
+    }
+    
+    .info-row {
+        padding: 1rem 0;
+    }
+    
+    .info-label {
+        font-size: 0.875rem;
+    }
+    
+    .info-value {
+        font-size: 1rem;
+    }
+    
+    .responsabilidad-badge {
+        font-size: 0.75rem !important;
+        padding: 0.5rem 0.9rem !important;
+    }
+    
+    .obligacion-item {
+        padding: 1.25rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .obligacion-icon {
+        width: 40px !important;
+        height: 40px !important;
+        font-size: 1.5rem !important;
+    }
+    
+    .obligacion-titulo {
+        font-size: 1.1rem !important;
+    }
+    
+    .obligacion-estado {
+        font-size: 0.875rem !important;
+        padding-left: 56px !important;
+    }
+    
+    .estado-activo {
+        padding: 1.25rem !important;
+    }
+    
+    /* Títulos en móvil */
+    .card-title {
+        font-size: 1.375rem !important;
+    }
+    
+    .subseccion-title {
+        font-size: 1.125rem !important;
+    }
+
+    .lead-form {
+        flex-direction: column;
+    }
+}
+
+/* ========================================
+   RESPONSIVE: TABLET
+   ======================================== */
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .resultados-grid {
+        gap: 1.25rem;
+    }
+    
+    .card-simetrica {
+        min-height: 550px;
+    }
+    
+    .score-circle {
+        width: 160px !important;
+        height: 160px !important;
+    }
+    
+    .score-number {
+        font-size: 2.5rem !important;
+    }
+    
+    .card-title {
+        font-size: 1.375rem;
+    }
+}
+
+/* ========================================
+   RESPONSIVE: DESKTOP GRANDE
+   ======================================== */
+
+@media (min-width: 1280px) {
+    .resultados-grid {
+        gap: 2rem;
+    }
+    
+    .card-simetrica {
+        min-height: 650px;
+        padding: 2.5rem;
+    }
+    
+    .score-circle {
+        width: 190px;
+        height: 190px;
+    }
+    
+    .score-number {
+        font-size: 3rem;
+    }
 }
