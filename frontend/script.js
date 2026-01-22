@@ -129,23 +129,23 @@ function mostrarEmpresa(datos) {
     
     let html = `
         <div class="info-row">
-            <span class="info-label">NIT:</span>
+            <span class="info-label">NIT</span>
             <span class="info-value">${formatearNIT(nit)}</span>
         </div>
         <div class="info-row">
-            <span class="info-label">Razón Social:</span>
+            <span class="info-label">Razón social</span>
             <span class="info-value">${razon_social}</span>
         </div>
         <div class="info-row">
-            <span class="info-label">Estado:</span>
+            <span class="info-label">Estado</span>
             <span class="info-value">${estado}</span>
         </div>
         <div class="info-row">
-            <span class="info-label">Ubicación:</span>
+            <span class="info-label">Ubicación</span>
             <span class="info-value">${municipio}, ${departamento}</span>
         </div>
         <div class="info-row">
-            <span class="info-label">Actividad Principal:</span>
+            <span class="info-label">Actividad principal</span>
             <span class="info-value">${actividad_principal}</span>
         </div>
     `;
@@ -154,7 +154,7 @@ function mostrarEmpresa(datos) {
     if (codigo_ciiu && codigo_ciiu !== 'N/A') {
         html += `
             <div class="info-row">
-                <span class="info-label">Código CIIU:</span>
+                <span class="info-label">Código CIIU</span>
                 <span class="info-value">${codigo_ciiu}</span>
             </div>
         `;
@@ -163,7 +163,7 @@ function mostrarEmpresa(datos) {
     if (tipo_sociedad) {
         html += `
             <div class="info-row">
-                <span class="info-label">Tipo de Sociedad:</span>
+                <span class="info-label">Tipo de sociedad</span>
                 <span class="info-value">${tipo_sociedad}</span>
             </div>
         `;
@@ -172,7 +172,7 @@ function mostrarEmpresa(datos) {
     if (tamano) {
         html += `
             <div class="info-row">
-                <span class="info-label">Tamaño:</span>
+                <span class="info-label">Tamaño</span>
                 <span class="info-value">${tamano}</span>
             </div>
         `;
@@ -181,7 +181,7 @@ function mostrarEmpresa(datos) {
     if (empleados_rango) {
         html += `
             <div class="info-row">
-                <span class="info-label">Empleados:</span>
+                <span class="info-label">Empleados</span>
                 <span class="info-value">${empleados_rango}</span>
             </div>
         `;
@@ -189,15 +189,15 @@ function mostrarEmpresa(datos) {
     
     html += `
         <div class="info-row">
-            <span class="info-label">Cámara de Comercio:</span>
+            <span class="info-label">Cámara de comercio</span>
             <span class="info-value">${camara || 'Por determinar'}</span>
         </div>
         <div class="info-row">
-            <span class="info-label">Fecha Matrícula:</span>
+            <span class="info-label">Fecha matrícula</span>
             <span class="info-value">${fecha_matricula}</span>
         </div>
         <div class="info-row">
-            <span class="info-label">Última Renovación:</span>
+            <span class="info-label">Última renovación</span>
             <span class="info-value">${ultima_renovacion}</span>
         </div>
     `;
@@ -206,7 +206,7 @@ function mostrarEmpresa(datos) {
     if (responsabilidades_tributarias && responsabilidades_tributarias.length > 0) {
         html += `
             <div class="info-row responsabilidades-row">
-                <span class="info-label">Responsabilidades:</span>
+                <span class="info-label">Responsabilidades</span>
                 <div class="responsabilidades-lista">
                     ${responsabilidades_tributarias.map(resp => 
                         `<span class="responsabilidad-badge">${resp}</span>`
@@ -464,7 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
             abrirMetodologia();
         });
     }
-});
+}); 
 
 // Verificar API al cargar
 verificarAPI();

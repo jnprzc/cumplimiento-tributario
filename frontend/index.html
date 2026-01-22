@@ -42,124 +42,131 @@
             </div>
         </section>
 
-        <!-- Sección de Resultados (oculta inicialmente) -->
+        <!-- Sección de Resultados -->
         <section id="resultadosSection" class="resultados-section hidden">
-            <!-- Información de la Empresa -->
-            <div class="card">
-                <h2>📊 Información de la Empresa</h2>
-                <div class="empresa-info" id="empresaInfo">
-                    <!-- Se llenará dinámicamente -->
-                </div>
-            </div>
-
-            <!-- Mapa de Cumplimiento -->
-            <div class="card">
-                <h2>🗺️ Mapa de Cumplimiento Tributario</h2>
+            
+            <!-- Layout de 2 Columnas Simétricas -->
+            <div class="resultados-grid">
                 
-                <!-- Score -->
-                <div class="score-display">
-                    <div class="score-circle">
-                        <svg viewBox="0 0 200 200">
-                            <defs>
-                                <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <!-- Círculo de fondo -->
-                             <circle class="score-circle-bg" cx="100" cy="100" r="90"></circle>
-                            <!-- Círculo de progreso -->
-                            <circle 
-                                id="scoreProgress"
-                                class="score-circle-progress" 
-                                cx="100" 
-                                cy="100" 
-                                r="90"
-                                stroke-dasharray="565.48"
-                                stroke-dashoffset="565.48">
-                            </circle>
-                          </svg>
-                          <div class="score-text">
-                            <div class="score-number">
-                                <span id="scoreValue">0</span><span class="score-total">/100</span>
-                            </div>
-                            <span class="score-label-new" id="nivelBadgeText">Calculando...</span>
+                <!-- COLUMNA IZQUIERDA: Información de Empresa -->
+                <div class="columna-info">
+                    <div class="card card-simetrica">
+                        <h2 class="card-title">📊 Información de la empresa</h2>
+                        <div id="empresaInfo" class="empresa-info">
+                            <!-- Se llenará dinámicamente -->
                         </div>
                     </div>
-                    <div id="nivelBadge"></div>
-                </div>
-
-
-                <!-- Estado Matrícula -->
-                <div class="estado-activo" id="matriculaCard">
-                    <span class="obligacion-icon" id="matriculaIcon">✅</span>
-                    <div style="flex: 1;">
-                        <div class="obligacion-titulo">Matrícula Mercantil</div>
-                        <div class="obligacion-estado" id="matriculaEstado">ACTIVA</div>
-                    </div>
-                </div>
-
-                <!-- Obligaciones Tributarias -->
-                <h3 class="subsection-title">Obligaciones Tributarias</h3>
-                
-                <div class="obligacion-item">
-                    <div class="obligacion-header">
-                        <span class="obligacion-icon">🕐</span>
-                        <span class="obligacion-titulo">IVA</span>
-                    </div>
-                    <span class="obligacion-estado">Por verificar en DIAN</span>
-                </div>
-
-                <div class="obligacion-item">
-                    <div class="obligacion-header">
-                        <span class="obligacion-icon">🕐</span>
-                        <span class="obligacion-titulo">Retención en la Fuente</span>
-                    </div>
-                    <span class="obligacion-estado">Por verificar en DIAN</span>
                 </div>
                 
-                <div class="obligacion-item">
-                    <div class="obligacion-header">
-                        <span class="obligacion-icon">🕐</span>
-                        <span class="obligacion-titulo" id="icaTitulo">ICA</span>
-                    </div>
-                    <span class="obligacion-estado" id="icaEstado">Por verificar con Alcaldía</span>
-                </div>
+                <!-- COLUMNA DERECHA: Mapa de Cumplimiento -->
+                <div class="columna-cumplimiento">
+                    <div class="card card-simetrica">
+                        <h2 class="card-title">🗺️ Mapa de cumplimiento tributario</h2>
+                        
+                        <!-- Score con círculo SVG -->
+                        <div class="score-display">
+                            <div class="score-circle">
+                                <svg viewBox="0 0 200 200">
+                                    <defs>
+                                        <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                                        </linearGradient>
+                                    </defs>
+                                    <circle class="score-circle-bg" cx="100" cy="100" r="90"></circle>
+                                    <circle 
+                                        id="scoreProgress"
+                                        class="score-circle-progress" 
+                                        cx="100" 
+                                        cy="100" 
+                                        r="90"
+                                        stroke-dasharray="565.48"
+                                        stroke-dashoffset="565.48">
+                                    </circle>
+                                </svg>
+                                <div class="score-text">
+                                    <div class="score-number">
+                                        <span id="scoreValue">0</span><span class="score-total">/100</span>
+                                    </div>
+                                    <span class="score-label-new" id="nivelBadgeText">Calculando...</span>
+                                </div>
+                            </div>
+                            <div id="nivelBadge"></div>
+                        </div>
 
-                <div class="obligacion-item">
-                    <div class="obligacion-header">
-                        <span class="obligacion-icon">🕐</span>
-                        <span class="obligacion-titulo">Renta Persona Jurídica</span>
+                        <!-- Estado de Matrícula -->
+                        <div class="estado-activo" id="matriculaCard">
+                            <span class="obligacion-icon" id="matriculaIcon">✅</span>
+                            <div style="flex: 1;">
+                                <div class="obligacion-titulo">Matrícula mercantil</div>
+                                <div class="obligacion-estado" id="matriculaEstado">Activa</div>
+                            </div>
+                        </div>
+
+                        <!-- Obligaciones Tributarias -->
+                        <h3 class="subseccion-title">Obligaciones tributarias</h3>
+                        
+                        <div class="obligacion-item">
+                            <div class="obligacion-header">
+                                <span class="obligacion-icon">🕐</span>
+                                <span class="obligacion-titulo">IVA</span>
+                            </div>
+                            <span class="obligacion-estado">Por verificar en DIAN</span>
+                        </div>
+
+                        <div class="obligacion-item">
+                            <div class="obligacion-header">
+                                <span class="obligacion-icon">🕐</span>
+                                <span class="obligacion-titulo">Retención en la fuente</span>
+                            </div>
+                            <span class="obligacion-estado">Por verificar en DIAN</span>
+                        </div>
+
+                        <div class="obligacion-item">
+                            <div class="obligacion-header">
+                                <span class="obligacion-icon">🕐</span>
+                                <span class="obligacion-titulo" id="icaTitulo">ICA</span>
+                            </div>
+                            <span class="obligacion-estado" id="icaEstado">Por verificar con Alcaldía</span>
+                        </div>
+
+                        <div class="obligacion-item">
+                            <div class="obligacion-header">
+                                <span class="obligacion-icon">🕐</span>
+                                <span class="obligacion-titulo">Renta persona jurídica</span>
+                            </div>
+                            <span class="obligacion-estado">Por verificar en DIAN</span>
+                        </div>
                     </div>
-                    <span class="obligacion-estado">Por verificar en DIAN</span>
                 </div>
             </div>
 
-            <!-- Próximos Pasos -->
+            <!-- Próximos Pasos - Ancho Completo -->
             <div class="card">
-                <h2>📋 Próximos Pasos Recomendados</h2>
+                <h2 class="card-title">📋 Próximos pasos recomendados</h2>
                 <ol class="pasos-lista" id="pasosList">
                     <!-- Se llenará dinámicamente -->
                 </ol>
             </div>
 
-            <!-- Captura de Lead -->
+            <!-- Formulario de Lead -->
             <div class="card lead-card">
-                <h2>📧 Recibe el Reporte Completo</h2>
-                <p>Ingresa tu email y te enviaremos un análisis detallado con recomendaciones personalizadas</p>
-                
-                <form id="leadForm">
-                    <div class="input-group">
-                        <input 
-                            type="email" 
-                            id="emailInput" 
-                            placeholder="tu@email.com"
-                            required
-                        >
-                        <button type="submit">Enviar Reporte</button>
-                    </div>
+                <h2 class="card-title">📧 Recibe el reporte completo</h2>
+                <p class="lead-description">
+                    Ingresa tu email y te enviaremos un análisis detallado con recomendaciones personalizadas
+                </p>
+                <form id="leadForm" class="lead-form">
+                    <input 
+                        type="email" 
+                        id="emailInput" 
+                        placeholder="tu@email.com" 
+                        required
+                        class="lead-input"
+                    >
+                    <button type="submit" class="btn-primary">Enviar reporte</button>
                 </form>
             </div>
+
         </section>
 
         <!-- Mensaje de Error -->

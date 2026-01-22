@@ -240,6 +240,12 @@ button:disabled {
     align-items: start;
 }
 
+/* Columnas del grid - AGREGAR ESTO */
+.columna-info,
+.columna-cumplimiento {
+    width: 100%;
+}
+
 /* ========================================
    INFORMACIÓN DE LA EMPRESA
    ======================================== */
@@ -810,6 +816,12 @@ button:disabled {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
+
+    .columna-info,
+    .columna-cumplimiento {
+        width: 100%;
+    }
+}
     
     /* Quitar altura mínima en móvil */
     .card-simetrica {
@@ -883,7 +895,6 @@ button:disabled {
     .lead-form {
         flex-direction: column;
     }
-}
 
 /* ========================================
    RESPONSIVE: TABLET
