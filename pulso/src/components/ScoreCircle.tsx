@@ -1,30 +1,32 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { ComplianceLevel } from '@/types';
+import type { DiagnosticLevel } from '@/types';
 
 const RADIUS = 54;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS; // ≈ 339.29
 
-const LEVEL_COLOR: Record<ComplianceLevel, string> = {
-  Premium: '#10b981',
-  Confiable: '#f59e0b',
-  Básico: '#ef4444',
+const LEVEL_COLOR: Record<DiagnosticLevel, string> = {
+  Saludable: '#16a34a',
+  Estable: '#ca8a04',
+  'En riesgo': '#ea580c',
+  Crítico: '#dc2626',
 };
 
-const LEVEL_BG: Record<ComplianceLevel, string> = {
-  Premium: 'bg-emerald-100 text-emerald-700',
-  Confiable: 'bg-amber-100 text-amber-700',
-  Básico: 'bg-red-100 text-red-700',
+const LEVEL_BADGE: Record<DiagnosticLevel, string> = {
+  Saludable: 'bg-emerald-100 text-emerald-700',
+  Estable: 'bg-yellow-100 text-yellow-800',
+  'En riesgo': 'bg-orange-100 text-orange-700',
+  Crítico: 'bg-red-100 text-red-700',
 };
 
 interface ScoreCircleProps {
   score: number;
-  nivel: ComplianceLevel;
+  level: DiagnosticLevel;
   size?: 'md' | 'lg';
 }
 
-export function ScoreCircle({ score, nivel, size = 'md' }: ScoreCircleProps) {
+export function ScoreCircle({ score, level, size = 'md' }: ScoreCircleProps) {
   const [displayed, setDisplayed] = useState(0);
   const [offset, setOffset] = useState(CIRCUMFERENCE);
 
@@ -36,7 +38,7 @@ export function ScoreCircle({ score, nivel, size = 'md' }: ScoreCircleProps) {
     const id = setInterval(() => {
       frame++;
       const t = frame / FRAMES;
-      const eased = 1 - Math.pow(1 - t, 3);
+      const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic
       setDisplayed(Math.round(score * eased));
       setOffset(CIRCUMFERENCE * (1 - (score * eased) / 100));
       if (frame >= FRAMES) clearInterval(id);
@@ -44,8 +46,8 @@ export function ScoreCircle({ score, nivel, size = 'md' }: ScoreCircleProps) {
     return () => clearInterval(id);
   }, [score]);
 
-  const dim = size === 'lg' ? 180 : 140;
-  const color = LEVEL_COLOR[nivel];
+  const dim = size === 'lg' ? 176 : 140;
+  const color = LEVEL_COLOR[level];
 
   return (
     <div className="flex flex-col items-center gap-2">
@@ -53,11 +55,11 @@ export function ScoreCircle({ score, nivel, size = 'md' }: ScoreCircleProps) {
         width={dim}
         height={dim}
         viewBox="0 0 120 120"
-        aria-label={`Score ${score} de 100 — ${nivel}`}
+        aria-label={`Puntuación ${score} de 100 — ${level}`}
       >
         {/* Track */}
         <circle cx="60" cy="60" r={RADIUS} fill="none" stroke="#e2e8f0" strokeWidth="10" />
-        {/* Progress */}
+        {/* Progress arc */}
         <circle
           cx="60"
           cy="60"
@@ -70,7 +72,7 @@ export function ScoreCircle({ score, nivel, size = 'md' }: ScoreCircleProps) {
           strokeDashoffset={offset}
           transform="rotate(-90 60 60)"
         />
-        {/* Score text */}
+        {/* Score number */}
         <text
           x="60"
           y="54"
@@ -93,8 +95,8 @@ export function ScoreCircle({ score, nivel, size = 'md' }: ScoreCircleProps) {
           /100
         </text>
       </svg>
-      <span className={`px-3 py-1 rounded-full text-sm font-semibold ${LEVEL_BG[nivel]}`}>
-        {nivel}
+      <span className={`px-3 py-1 rounded-full text-sm font-semibold ${LEVEL_BADGE[level]}`}>
+        {level}
       </span>
     </div>
   );

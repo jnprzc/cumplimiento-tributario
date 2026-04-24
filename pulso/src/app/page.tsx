@@ -1,286 +1,297 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import { QUESTIONS } from '@/lib/questions';
+import { calculateScore } from '@/lib/scoring';
 import { ScoreCircle } from '@/components/ScoreCircle';
 import { Dashboard } from '@/components/Dashboard';
-import type { DiagnosisResult } from '@/types';
+import type { DiagnosticResult } from '@/types';
 
-// ─── helpers ─────────────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────────
 
-function formatNIT(nit: string): string {
-  return nit.replace(/(\d{3})(\d{3})(\d{3})/, '$1.$2.$3');
-}
+type Phase = 'landing' | 'quiz' | 'calculating' | 'result' | 'gate' | 'dashboard';
 
-const SAMPLE_NITS = [
-  '890903938',
-  '860034313',
-  '890900608',
-  '800197268',
-  '900123456',
-  '900234567',
-  '900111111',
-];
+// ─── Header ───────────────────────────────────────────────────────────────────
 
-// ─── Phase types ──────────────────────────────────────────────────────────────
-
-type Phase = 'idle' | 'loading' | 'result' | 'gate' | 'dashboard';
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function Header() {
+function PulsoLogo() {
   return (
-    <header className="bg-gradient-to-br from-blue-700 via-blue-600 to-blue-800 text-white">
-      <div className="max-w-2xl mx-auto px-5 py-8 text-center">
-        <p className="text-xs font-semibold tracking-widest uppercase text-blue-200 mb-2">
-          Pulso
-        </p>
-        <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight">
-          Diagnóstico Tributario
-          <br />
-          <span className="text-blue-200">para tu empresa</span>
-        </h1>
-        <p className="mt-3 text-blue-100 text-sm sm:text-base max-w-md mx-auto">
-          Conoce el nivel de cumplimiento de tus obligaciones fiscales en segundos.
-          Gratis · Sin registro.
-        </p>
-      </div>
-    </header>
+    <span className="font-black text-blue-600 text-xl tracking-tight">
+      💓 Pulso
+    </span>
   );
 }
 
-function Footer() {
+// ─── Landing ──────────────────────────────────────────────────────────────────
+
+function Landing({ onStart }: { onStart: () => void }) {
   return (
-    <footer className="border-t border-slate-200 mt-12 py-8">
-      <div className="max-w-2xl mx-auto px-5 text-center space-y-2">
-        <p className="text-xs text-slate-400">
-          Los datos se consultan de fuentes públicas: RUES, DIAN y Cámaras de Comercio.
-          No almacenamos información tributaria confidencial.
-        </p>
-        <p className="text-xs text-slate-400">
-          Protección de datos — Ley 1581 de 2012 ·{' '}
-          <a href="/privacidad" className="underline hover:text-blue-600">
-            Política de privacidad
-          </a>
-        </p>
-        <p className="text-xs text-slate-300 pt-1">
-          © {new Date().getFullYear()} Pulso · MVP v0.1
-        </p>
-      </div>
-    </footer>
-  );
-}
-
-// ─── NIT input phase ──────────────────────────────────────────────────────────
-
-interface NitFormProps {
-  onSubmit: (nit: string) => void;
-  error: string;
-}
-
-function NitForm({ onSubmit, error }: NitFormProps) {
-  const [value, setValue] = useState('');
-
-  function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
-    setValue(e.target.value.replace(/\D/g, '').slice(0, 9));
-  }
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (value.length === 9) onSubmit(value);
-  }
-
-  return (
-    <div className="animate-fade-in max-w-xl mx-auto mt-8 sm:mt-12">
-      <form onSubmit={handleSubmit} noValidate>
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
-          <h2 className="text-lg font-bold text-slate-800 mb-1">
-            Ingresa el NIT de tu empresa
-          </h2>
-          <p className="text-sm text-slate-500 mb-5">
-            9 dígitos sin puntos ni dígito de verificación
+    <div className="min-h-screen flex flex-col">
+      {/* Hero */}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 py-16 bg-gradient-to-b from-slate-900 via-blue-950 to-blue-900 text-white">
+        <div className="text-center max-w-sm">
+          <div className="text-6xl mb-6 select-none">💓</div>
+          <h1 className="text-5xl font-black tracking-tight mb-3">Pulso</h1>
+          <p className="text-2xl font-semibold text-blue-200 leading-tight mb-2">
+            Sabe cómo está tu negocio.
           </p>
-
-          <div className="flex gap-2">
-            <input
-              type="text"
-              inputMode="numeric"
-              pattern="\d{9}"
-              value={value}
-              onChange={handleInput}
-              placeholder="Ej: 890903938"
-              aria-label="NIT de la empresa"
-              className="flex-1 h-12 px-4 rounded-xl border border-slate-300 text-slate-900 font-mono text-lg
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                         placeholder:text-slate-300"
-            />
-            <button
-              type="submit"
-              disabled={value.length !== 9}
-              className="h-12 px-5 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 disabled:cursor-not-allowed
-                         text-white disabled:text-slate-400 font-semibold rounded-xl transition-colors whitespace-nowrap"
-            >
-              Consultar →
-            </button>
-          </div>
-
-          {error && (
-            <p role="alert" className="mt-3 text-sm text-red-600 font-medium">
-              {error}
-            </p>
-          )}
+          <p className="text-2xl font-semibold text-blue-300 leading-tight mb-8">
+            Antes de que sea tarde.
+          </p>
+          <button
+            onClick={onStart}
+            className="w-full bg-blue-500 hover:bg-blue-400 active:scale-95 text-white
+                       font-bold py-4 px-8 rounded-2xl text-lg transition-all duration-150 shadow-lg shadow-blue-900/40"
+          >
+            Hacer diagnóstico gratis
+          </button>
+          <p className="mt-4 text-sm text-blue-300">
+            12 preguntas · 3 minutos · Sin registro
+          </p>
         </div>
-      </form>
+      </div>
 
-      {/* Sample NITs hint */}
-      <div className="mt-4 text-center">
-        <p className="text-xs text-slate-400 mb-2">NITs de prueba disponibles:</p>
-        <div className="flex flex-wrap justify-center gap-1.5">
-          {SAMPLE_NITS.map((nit) => (
-            <button
-              key={nit}
-              onClick={() => onSubmit(nit)}
-              className="text-xs px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-500
-                         hover:border-blue-400 hover:text-blue-600 font-mono transition-colors"
-            >
-              {nit}
-            </button>
+      {/* Value props */}
+      <div className="bg-slate-50 px-6 py-10">
+        <div className="max-w-sm mx-auto space-y-5">
+          {[
+            ['🔍', 'Diagnóstico honesto', 'Evalúa flujo de caja, ventas, clientes y gestión básica.'],
+            ['📊', 'Resultado en segundos', 'Score 0-100 con tu nivel: Crítico, En riesgo, Estable o Saludable.'],
+            ['🎯', 'Plan de acción claro', 'Recomendaciones priorizadas en lenguaje simple, sin tecnicismos.'],
+          ].map(([icon, title, desc]) => (
+            <div key={title} className="flex gap-4 items-start">
+              <span className="text-2xl">{icon}</span>
+              <div>
+                <p className="font-bold text-slate-800 text-sm">{title}</p>
+                <p className="text-sm text-slate-500 leading-snug">{desc}</p>
+              </div>
+            </div>
           ))}
         </div>
       </div>
+
+      <footer className="text-center py-4 text-xs text-slate-400 border-t border-slate-200">
+        Pulso · Sin costo · Sin registro · Ley 1581 de 2012
+      </footer>
     </div>
   );
 }
 
-// ─── Loading phase ────────────────────────────────────────────────────────────
+// ─── Quiz ─────────────────────────────────────────────────────────────────────
 
-function LoadingState() {
+interface QuizProps {
+  questionIndex: number;
+  previousAnswer?: string;
+  onAnswer: (value: string) => void;
+  onBack: () => void;
+}
+
+function QuizScreen({ questionIndex, previousAnswer, onAnswer, onBack }: QuizProps) {
+  const question = QUESTIONS[questionIndex];
+  const progress = ((questionIndex) / QUESTIONS.length) * 100;
+
   return (
-    <div className="flex flex-col items-center justify-center py-24 gap-4 animate-fade-in">
-      <div className="w-10 h-10 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-      <p className="text-sm text-slate-500 font-medium">Consultando fuentes oficiales…</p>
+    <div className="min-h-screen flex flex-col bg-white">
+      {/* Top bar */}
+      <div className="sticky top-0 z-10 bg-white border-b border-slate-100 px-4 pt-3 pb-0">
+        <div className="max-w-lg mx-auto flex items-center justify-between mb-3">
+          <button
+            onClick={onBack}
+            className="text-sm text-slate-400 hover:text-slate-700 flex items-center gap-1 transition-colors"
+          >
+            ← Atrás
+          </button>
+          <PulsoLogo />
+          <span className="text-sm font-medium text-slate-400 tabular-nums">
+            {questionIndex + 1} / {QUESTIONS.length}
+          </span>
+        </div>
+        {/* Progress bar */}
+        <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-blue-500 rounded-full transition-all duration-300"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Question */}
+      <div className="flex-1 flex flex-col justify-center px-6 py-10 max-w-lg mx-auto w-full animate-fade-in">
+        <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">
+          Pregunta {questionIndex + 1} de {QUESTIONS.length}
+        </p>
+        <h2 className="text-2xl font-bold text-slate-900 leading-snug mb-8">
+          {question.text}
+        </h2>
+
+        {/* Answer buttons */}
+        <div className="space-y-3">
+          {question.options.map((option) => {
+            const isSelected = previousAnswer === option.value;
+            return (
+              <button
+                key={option.value}
+                onClick={() => onAnswer(option.value)}
+                className={`w-full text-left px-5 py-4 rounded-2xl border-2 font-semibold text-base
+                            transition-all duration-100 active:scale-[0.98]
+                            ${
+                              isSelected
+                                ? 'border-blue-500 bg-blue-50 text-blue-700'
+                                : 'border-slate-200 bg-white text-slate-800 hover:border-blue-300 hover:bg-blue-50/50'
+                            }`}
+              >
+                {option.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
 
-// ─── Result preview phase ─────────────────────────────────────────────────────
+// ─── Calculating ──────────────────────────────────────────────────────────────
+
+function CalculatingScreen() {
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center gap-5 bg-white animate-fade-in px-6">
+      <div className="w-12 h-12 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin" />
+      <div className="text-center">
+        <p className="text-lg font-bold text-slate-900">Analizando tu negocio…</p>
+        <p className="text-sm text-slate-500 mt-1">Calculando tu diagnóstico personalizado</p>
+      </div>
+    </div>
+  );
+}
+
+// ─── Result preview ───────────────────────────────────────────────────────────
 
 interface ResultPreviewProps {
-  result: DiagnosisResult;
+  result: DiagnosticResult;
   onContinue: () => void;
   onReset: () => void;
 }
 
 function ResultPreview({ result, onContinue, onReset }: ResultPreviewProps) {
   return (
-    <div className="animate-fade-in max-w-xl mx-auto mt-8 sm:mt-12">
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
-        <div className="flex flex-col items-center gap-5">
-          <ScoreCircle score={result.score} nivel={result.nivel} size="lg" />
+    <div className="min-h-screen flex flex-col bg-slate-50">
+      <header className="px-5 py-4 bg-white border-b border-slate-100 flex justify-center">
+        <PulsoLogo />
+      </header>
 
-          <div className="text-center">
-            <p className="text-xl font-extrabold text-slate-900">{result.empresa.razon_social}</p>
-            <p className="text-sm text-slate-500 mt-1 font-mono">
-              NIT {formatNIT(result.nit)}
-            </p>
-            <p className="text-xs text-slate-400 mt-1">
-              {result.empresa.municipio}, {result.empresa.departamento}
-            </p>
-          </div>
+      <main className="flex-1 flex flex-col items-center justify-center px-5 py-10">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-7 w-full max-w-sm animate-fade-in">
+          <div className="flex flex-col items-center gap-5">
+            <ScoreCircle score={result.score} level={result.level} size="lg" />
 
-          <div className="w-full border-t border-slate-100 pt-5 space-y-3">
-            <p className="text-sm text-slate-600 text-center">
-              Hemos evaluado <strong>7 señales de cumplimiento</strong>. Para ver el
-              análisis detallado, continúa con tu correo.
-            </p>
-            <button
-              onClick={onContinue}
-              className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors"
-            >
-              Ver diagnóstico completo →
-            </button>
-            <button
-              onClick={onReset}
-              className="w-full py-2.5 text-sm text-slate-400 hover:text-slate-600 transition-colors"
-            >
-              ← Consultar otro NIT
-            </button>
+            <div className="w-full border-t border-slate-100 pt-5">
+              <p className="text-sm font-bold text-slate-800 mb-3">
+                Tus 3 hallazgos principales:
+              </p>
+              <ul className="space-y-2">
+                {result.findings.map((f, i) => (
+                  <li key={i} className="flex gap-2 text-sm text-slate-600 leading-snug">
+                    <span className="text-blue-400 mt-0.5 shrink-0">•</span>
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="w-full space-y-2 pt-1">
+              <button
+                onClick={onContinue}
+                className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98]
+                           text-white font-bold rounded-2xl transition-all"
+              >
+                Ver mi plan de acción →
+              </button>
+              <button
+                onClick={onReset}
+                className="w-full py-2.5 text-sm text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                ← Repetir diagnóstico
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
 
-// ─── Email gate phase ─────────────────────────────────────────────────────────
+// ─── Email gate ───────────────────────────────────────────────────────────────
 
-interface EmailGateProps {
-  onSubmit: (email: string) => void;
-}
-
-function EmailGate({ onSubmit }: EmailGateProps) {
+function EmailGate({ onSubmit }: { onSubmit: (email: string) => void }) {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!EMAIL_RE.test(email)) {
+    const trimmed = email.trim();
+    if (!EMAIL_RE.test(trimmed)) {
       setError('Ingresa un correo válido.');
       inputRef.current?.focus();
       return;
     }
     setLoading(true);
-    setError('');
-    onSubmit(email);
+    onSubmit(trimmed);
   }
 
   return (
-    <div className="animate-fade-in max-w-md mx-auto mt-8 sm:mt-12">
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
-        <div className="text-center mb-6">
-          <div className="text-3xl mb-3">📊</div>
-          <h2 className="text-xl font-bold text-slate-900">Tu diagnóstico está listo</h2>
-          <p className="text-sm text-slate-500 mt-1">
-            Ingresa tu correo para ver el análisis completo de cumplimiento.
+    <div className="min-h-screen flex flex-col bg-slate-50">
+      <header className="px-5 py-4 bg-white border-b border-slate-100 flex justify-center">
+        <PulsoLogo />
+      </header>
+
+      <main className="flex-1 flex flex-col items-center justify-center px-5 py-10">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-7 w-full max-w-sm animate-fade-in">
+          <div className="text-center mb-6">
+            <div className="text-4xl mb-3">📬</div>
+            <h2 className="text-xl font-extrabold text-slate-900">
+              Recibe tu plan de acción personalizado
+            </h2>
+            <p className="text-sm text-slate-500 mt-2 leading-snug">
+              Ingresa tu correo para ver el diagnóstico completo y las recomendaciones.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} noValidate className="space-y-3">
+            <input
+              ref={inputRef}
+              type="email"
+              value={email}
+              onChange={(e) => { setEmail(e.target.value); setError(''); }}
+              placeholder="correo@tunegocio.com"
+              aria-label="Correo electrónico"
+              className="w-full h-12 px-4 rounded-xl border border-slate-300 text-slate-900
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                         placeholder:text-slate-300"
+            />
+            {error && (
+              <p role="alert" className="text-sm text-red-600 font-medium">
+                {error}
+              </p>
+            )}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400
+                         text-white font-bold rounded-2xl transition-colors"
+            >
+              {loading ? 'Abriendo tu diagnóstico…' : 'Ver diagnóstico completo →'}
+            </button>
+          </form>
+
+          <p className="mt-4 text-xs text-slate-400 text-center leading-relaxed">
+            Sin spam. Solo tu plan de acción.
+            <br />
+            Ley 1581 de 2012 — Protección de datos.
           </p>
         </div>
-
-        <form onSubmit={handleSubmit} noValidate className="space-y-3">
-          <input
-            ref={inputRef}
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="correo@empresa.com"
-            aria-label="Correo electrónico"
-            className="w-full h-12 px-4 rounded-xl border border-slate-300 text-slate-900
-                       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                       placeholder:text-slate-300"
-          />
-          {error && (
-            <p role="alert" className="text-sm text-red-600 font-medium">
-              {error}
-            </p>
-          )}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400
-                       text-white font-semibold rounded-xl transition-colors"
-          >
-            {loading ? 'Abriendo dashboard…' : 'Ver mi diagnóstico completo →'}
-          </button>
-        </form>
-
-        <p className="mt-4 text-xs text-slate-400 text-center leading-relaxed">
-          Solo te enviaremos tu informe. Sin spam.
-          <br />
-          Ley 1581 de 2012 — Protección de datos.
-        </p>
-      </div>
+      </main>
     </div>
   );
 }
@@ -288,74 +299,108 @@ function EmailGate({ onSubmit }: EmailGateProps) {
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function Home() {
-  const [phase, setPhase] = useState<Phase>('idle');
-  const [nit, setNit] = useState('');
-  const [result, setResult] = useState<DiagnosisResult | null>(null);
-  const [error, setError] = useState('');
+  const [phase, setPhase] = useState<Phase>('landing');
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [result, setResult] = useState<DiagnosticResult | null>(null);
 
-  async function handleNitSubmit(inputNit: string) {
-    setPhase('loading');
-    setError('');
-    try {
-      const res = await fetch('/api/consultar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nit: inputNit }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? 'Error al consultar');
-      setResult(data as DiagnosisResult);
-      setNit(inputNit);
-      setPhase('result');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido. Intenta de nuevo.');
-      setPhase('idle');
+  function startQuiz() {
+    setCurrentIndex(0);
+    setAnswers({});
+    setResult(null);
+    setPhase('quiz');
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  function handleAnswer(value: string) {
+    const question = QUESTIONS[currentIndex];
+    const newAnswers = { ...answers, [question.id]: value };
+    setAnswers(newAnswers);
+
+    if (currentIndex < QUESTIONS.length - 1) {
+      setCurrentIndex((i) => i + 1);
+    } else {
+      setPhase('calculating');
+      setTimeout(() => {
+        setResult(calculateScore(newAnswers));
+        setPhase('result');
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }, 1400);
     }
   }
 
-  async function handleEmailSubmit(email: string) {
-    // Non-blocking lead capture
+  function goBack() {
+    if (currentIndex === 0) {
+      setPhase('landing');
+    } else {
+      setCurrentIndex((i) => i - 1);
+    }
+  }
+
+  function handleEmailSubmit(email: string) {
+    // Non-blocking save to Supabase
     fetch('/api/lead', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, nit, score: result?.score }),
+      body: JSON.stringify({
+        email,
+        score: result?.score,
+        level: result?.level,
+        responses: answers,
+      }),
     }).catch(() => {});
+
     setPhase('dashboard');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }
 
   function reset() {
-    setPhase('idle');
+    setPhase('landing');
+    setCurrentIndex(0);
+    setAnswers({});
     setResult(null);
-    setNit('');
-    setError('');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
+  if (phase === 'landing') return <Landing onStart={startQuiz} />;
 
-      <main className="flex-1 max-w-2xl w-full mx-auto px-4 py-2">
-        {phase === 'idle' && <NitForm onSubmit={handleNitSubmit} error={error} />}
-        {phase === 'loading' && <LoadingState />}
-        {phase === 'result' && result && (
-          <ResultPreview
-            result={result}
-            onContinue={() => setPhase('gate')}
-            onReset={reset}
-          />
-        )}
-        {phase === 'gate' && <EmailGate onSubmit={handleEmailSubmit} />}
-        {phase === 'dashboard' && result && (
-          <div className="mt-6">
-            <Dashboard result={result} onReset={reset} />
-          </div>
-        )}
-      </main>
+  if (phase === 'quiz') {
+    return (
+      <QuizScreen
+        questionIndex={currentIndex}
+        previousAnswer={answers[QUESTIONS[currentIndex].id]}
+        onAnswer={handleAnswer}
+        onBack={goBack}
+      />
+    );
+  }
 
-      <Footer />
-    </div>
-  );
+  if (phase === 'calculating') return <CalculatingScreen />;
+
+  if (phase === 'result' && result) {
+    return (
+      <ResultPreview
+        result={result}
+        onContinue={() => { setPhase('gate'); window.scrollTo({ top: 0, behavior: 'instant' }); }}
+        onReset={reset}
+      />
+    );
+  }
+
+  if (phase === 'gate') return <EmailGate onSubmit={handleEmailSubmit} />;
+
+  if (phase === 'dashboard' && result) {
+    return (
+      <div className="min-h-screen bg-slate-50">
+        <header className="sticky top-0 z-10 px-5 py-4 bg-white border-b border-slate-100 flex justify-center">
+          <PulsoLogo />
+        </header>
+        <main className="max-w-xl mx-auto px-4 py-6">
+          <Dashboard result={result} onReset={reset} />
+        </main>
+      </div>
+    );
+  }
+
+  return null;
 }

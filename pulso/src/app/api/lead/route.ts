@@ -6,8 +6,9 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
   const email: string = String(body.email ?? '').trim().toLowerCase();
-  const nit: string = String(body.nit ?? '').replace(/\D/g, '');
   const score: number = Number(body.score ?? 0);
+  const level: string = String(body.level ?? '');
+  const responses: Record<number, string> = body.responses ?? {};
 
   if (!EMAIL_RE.test(email)) {
     return NextResponse.json({ error: 'Correo inválido.' }, { status: 400 });
@@ -15,9 +16,12 @@ export async function POST(req: NextRequest) {
 
   try {
     const db = createServerClient();
-    await db.from('leads').insert({ email, nit, score });
+    // Save full diagnostic record (email + responses + result)
+    await db.from('diagnostics').insert({ email, responses, score, level });
+    // Save lightweight lead record for CRM/marketing
+    await db.from('leads').insert({ email, score, level });
   } catch {
-    // Non-blocking — dashboard access continues regardless
+    // Non-blocking — dashboard access continues even if DB is unavailable
   }
 
   return NextResponse.json({ ok: true });

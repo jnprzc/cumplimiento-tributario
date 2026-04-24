@@ -1,42 +1,43 @@
-export type CompanySize = 'GRANDE' | 'MEDIANA' | 'PEQUEÑA' | 'MICROEMPRESA';
-export type CompanyStatus = 'ACTIVA' | 'INACTIVA' | 'CANCELADA';
-export type ComplianceLevel = 'Premium' | 'Confiable' | 'Básico';
+export type DiagnosticLevel = 'Crítico' | 'En riesgo' | 'Estable' | 'Saludable';
+export type QuestionCategory = 'cashflow' | 'sales' | 'management';
 
-export interface Company {
-  nit: string;
-  razon_social: string;
-  estado: CompanyStatus;
-  municipio: string;
-  departamento: string;
-  actividad_principal: string;
-  codigo_ciiu: string;
-  fecha_matricula: string;
-  ultima_renovacion: string;
-  tipo_sociedad: string;
-  camara: string;
-  estado_renovacion_2024: string;
-  tamano: CompanySize;
-  empleados_rango: string;
-  responsabilidades_tributarias: string[];
-  tiene_comercio_exterior: boolean;
-  tipo_comercio?: string;
+export interface QuestionOption {
+  label: string;
+  value: string;
+  points: number;
 }
 
-export interface Signal {
-  nombre: string;
-  activa: boolean;
-  puntos_maximos: number;
-  puntos_obtenidos: number;
-  descripcion: string;
-  icono: string;
+export interface Question {
+  id: number;
+  text: string;
+  category: QuestionCategory;
+  options: QuestionOption[];
 }
 
-export interface DiagnosisResult {
-  nit: string;
-  empresa: Company;
+export interface CategoryScore {
   score: number;
-  nivel: ComplianceLevel;
-  senales: Signal[];
-  senales_activas: number;
-  proximos_pasos: string[];
+  maxScore: number;
+  label: string;
+  emoji: string;
+}
+
+export interface CategoryScores {
+  cashflow: CategoryScore;
+  sales: CategoryScore;
+  management: CategoryScore;
+}
+
+export interface Recommendation {
+  title: string;
+  description: string;
+  priority: 'high' | 'medium';
+  category: QuestionCategory;
+}
+
+export interface DiagnosticResult {
+  score: number;
+  level: DiagnosticLevel;
+  categoryScores: CategoryScores;
+  findings: string[];
+  recommendations: Recommendation[];
 }
