@@ -270,9 +270,23 @@ function CalculatingScreen() {
   );
 }
 
-// ─── Share card (off-screen for html2canvas) ──────────────────────────────────
+// ─── Share image (native Canvas 2D, no external deps) ────────────────────────
 
-function ShareCard({ result }: { result: DiagnosticResult }) {
+function rrect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.arcTo(x + w, y, x + w, y + r, r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+  ctx.lineTo(x + r, y + h);
+  ctx.arcTo(x, y + h, x, y + h - r, r);
+  ctx.lineTo(x, y + r);
+  ctx.arcTo(x, y, x + r, y, r);
+  ctx.closePath();
+}
+
+async function generateShareImage(result: DiagnosticResult): Promise<Blob | null> {
   const LEVEL_COLOR: Record<DiagnosticResult['level'], string> = {
     Crítico:     '#dc2626',
     'En riesgo': '#F59E0B',
@@ -280,45 +294,70 @@ function ShareCard({ result }: { result: DiagnosticResult }) {
     Saludable:   '#2D7A4F',
   };
   const color = LEVEL_COLOR[result.level];
+  const dpr = 2;
+  const W = 400, H = 280;
 
-  return (
-    <div id="share-card" style={{
-      position: 'fixed', left: '-9999px', top: 0,
-      width: 400, background: '#ffffff',
-      borderRadius: 24, overflow: 'hidden',
-      fontFamily: 'system-ui, -apple-system, sans-serif',
-    }}>
-      <div style={{ height: 8, background: '#2D7A4F' }} />
-      <div style={{ padding: 32 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24 }}>
-          <div style={{ width: 28, height: 28, borderRadius: 8, background: '#2D7A4F',
-            display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="18" height="12" viewBox="0 0 18 12" fill="none">
-              <polyline points="1,6 4,6 6,1 8.5,11 11,6 14,6 15.5,3.5 17,6"
-                stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <span style={{ fontWeight: 800, fontSize: 20, color: '#0f172a' }}>pulso</span>
-        </div>
-        <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <div style={{ fontSize: 80, fontWeight: 900, color, lineHeight: 1 }}>{result.score}</div>
-          <div style={{ fontSize: 14, color: '#64748b', marginTop: 4 }}>sobre 100</div>
-          <div style={{
-            display: 'inline-block', marginTop: 12, padding: '6px 16px',
-            background: color + '22', borderRadius: 999,
-            fontSize: 14, fontWeight: 700, color,
-          }}>
-            {result.level}
-          </div>
-        </div>
-        <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: 16 }}>
-          <p style={{ fontSize: 11, color: '#94a3b8', textAlign: 'center' }}>
-            Diagnóstico de salud empresarial · pulso.co
-          </p>
-        </div>
-      </div>
-    </div>
-  );
+  const canvas = document.createElement('canvas');
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+  ctx.scale(dpr, dpr);
+
+  ctx.fillStyle = '#ffffff';
+  rrect(ctx, 0, 0, W, H, 16);
+  ctx.fill();
+
+  ctx.fillStyle = '#2D7A4F';
+  ctx.fillRect(0, 0, W, 8);
+
+  ctx.fillStyle = '#0f172a';
+  ctx.font = '800 20px system-ui, -apple-system, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('pulso', 32, 50);
+
+  ctx.fillStyle = color;
+  ctx.font = '900 80px system-ui, -apple-system, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(String(result.score), W / 2, 155);
+
+  ctx.fillStyle = '#64748b';
+  ctx.font = '400 14px system-ui, -apple-system, sans-serif';
+  ctx.fillText('sobre 100', W / 2, 175);
+
+  ctx.font = '700 14px system-ui, -apple-system, sans-serif';
+  const bw = ctx.measureText(result.level).width + 32;
+  ctx.fillStyle = color + '22';
+  rrect(ctx, W / 2 - bw / 2, 188, bw, 28, 14);
+  ctx.fill();
+  ctx.fillStyle = color;
+  ctx.fillText(result.level, W / 2, 207);
+
+  ctx.strokeStyle = '#f1f5f9';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(32, 232);
+  ctx.lineTo(W - 32, 232);
+  ctx.stroke();
+
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '400 11px system-ui, -apple-system, sans-serif';
+  ctx.fillText('Diagnóstico de salud empresarial · pulso.co', W / 2, 258);
+
+  return new Promise((resolve) => { canvas.toBlob((blob) => resolve(blob), 'image/png'); });
+}
+
+async function doShare(blob: Blob) {
+  if (navigator.share) {
+    try {
+      await navigator.share({ files: [new File([blob], 'pulso.png', { type: 'image/png' })], title: 'Mi diagnóstico Pulso' });
+      return;
+    } catch {}
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'mi-diagnostico-pulso.png'; a.click();
+  URL.revokeObjectURL(url);
 }
 
 // ─── Result preview ───────────────────────────────────────────────────────────
@@ -331,23 +370,8 @@ function ResultPreview({
   async function handleShare() {
     setSharing(true);
     try {
-      const html2canvas = (await import('html2canvas')).default;
-      const card = document.getElementById('share-card');
-      if (!card) return;
-      const canvas = await html2canvas(card, { scale: 2, useCORS: true });
-      canvas.toBlob(async (blob) => {
-        if (!blob) return;
-        if (navigator.share) {
-          try {
-            await navigator.share({ files: [new File([blob], 'pulso.png', { type: 'image/png' })], title: 'Mi diagnóstico Pulso' });
-            return;
-          } catch {}
-        }
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = 'mi-diagnostico-pulso.png'; a.click();
-        URL.revokeObjectURL(url);
-      });
+      const blob = await generateShareImage(result);
+      if (blob) await doShare(blob);
     } finally {
       setSharing(false);
     }
@@ -355,7 +379,6 @@ function ResultPreview({
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F4F0]">
-      <ShareCard result={result} />
       <header className="px-5 py-4 bg-white border-b border-slate-100 flex justify-center">
         <PulsoLogo />
       </header>
@@ -568,25 +591,8 @@ export default function Home() {
 
   const handleShare = useCallback(async () => {
     if (!result) return;
-    try {
-      const html2canvas = (await import('html2canvas')).default;
-      const card = document.getElementById('share-card');
-      if (!card) return;
-      const canvas = await html2canvas(card, { scale: 2, useCORS: true });
-      canvas.toBlob(async (blob) => {
-        if (!blob) return;
-        if (navigator.share) {
-          try {
-            await navigator.share({ files: [new File([blob], 'pulso.png', { type: 'image/png' })], title: 'Mi diagnóstico Pulso' });
-            return;
-          } catch {}
-        }
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = 'mi-diagnostico-pulso.png'; a.click();
-        URL.revokeObjectURL(url);
-      });
-    } catch {}
+    const blob = await generateShareImage(result);
+    if (blob) await doShare(blob);
   }, [result]);
 
   if (phase === 'loading') return null;
@@ -616,7 +622,6 @@ export default function Home() {
   if (phase === 'dashboard' && result) {
     return (
       <>
-        <ShareCard result={result} />
         <div className="min-h-screen bg-[#F5F4F0]">
           <header className="sticky top-0 z-10 px-5 py-3.5 bg-white border-b border-slate-100 flex items-center justify-between">
             <PulsoLogo />
