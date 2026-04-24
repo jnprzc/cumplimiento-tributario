@@ -9,6 +9,7 @@
   }
 
   body {
-    @apply bg-slate-50 text-slate-900;
+    background-color: #F5F4F0;
+    @apply text-slate-900;
   }
 }
