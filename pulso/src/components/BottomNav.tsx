@@ -16,7 +16,7 @@ const TABS = [
     ),
   },
   {
-    href: '/check-in',
+    href: '/diagnostico',
     label: 'Diagnóstico',
     icon: (active: boolean) => (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
@@ -53,8 +53,8 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-50 bg-white border-t border-slate-200 safe-area-pb">
-      <div className="flex items-stretch max-w-lg mx-auto">
+    <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-white border-t border-slate-200 safe-area-pb">
+      <div className="flex items-stretch">
         {TABS.map(({ href, label, icon }) => {
           const active = pathname === href;
           return (

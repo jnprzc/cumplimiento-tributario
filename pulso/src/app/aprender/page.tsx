@@ -1,6 +1,5 @@
 'use client';
 
-import { BottomNav } from '@/components/BottomNav';
 import { PulsoLogo } from '@/components/PulsoLogo';
 
 // ─── Lesson data ──────────────────────────────────────────────────────────────
@@ -157,7 +156,7 @@ export default function AprenderPage() {
     <div className="min-h-screen flex flex-col bg-[#F5F4F0]">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white border-b border-slate-100 px-5 pt-4 pb-3">
-        <div className="max-w-lg mx-auto">
+        <div className="max-w-2xl mx-auto">
           <PulsoLogo size="sm" />
           <p className="text-xs font-bold text-pulso uppercase tracking-widest mt-3">
             Tu ruta personalizada
@@ -181,18 +180,15 @@ export default function AprenderPage() {
       </div>
 
       {/* Lesson timeline */}
-      <main className="flex-1 max-w-lg mx-auto w-full px-5 pt-6 pb-28">
+      <main className="flex-1 max-w-2xl mx-auto w-full px-5 pt-6 pb-28 md:pb-10">
         {LESSONS.map((lesson, i) => (
           <LessonNode key={lesson.id} lesson={lesson} isLast={i === LESSONS.length - 1} />
         ))}
 
-        {/* Footer note */}
         <p className="text-xs text-slate-400 text-center mt-4 leading-relaxed px-4">
           Las lecciones se desbloquean según tu progreso y check-ins semanales.
         </p>
       </main>
-
-      <BottomNav />
     </div>
   );
 }

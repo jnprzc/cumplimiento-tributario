@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { BottomNav } from '@/components/BottomNav';
 import { PulsoLogo } from '@/components/PulsoLogo';
 
 // ─── Stat pill ────────────────────────────────────────────────────────────────
@@ -126,7 +125,7 @@ export default function PerfilPage() {
     <div className="min-h-screen flex flex-col bg-[#F5F4F0]">
       {/* Header */}
       <div className="bg-white border-b border-slate-100 px-5 pt-5 pb-5">
-        <div className="max-w-lg mx-auto">
+        <div className="max-w-2xl mx-auto">
           <PulsoLogo size="sm" />
           <div className="mt-4 flex items-center gap-4">
             {/* Avatar */}
@@ -143,7 +142,7 @@ export default function PerfilPage() {
         </div>
       </div>
 
-      <main className="flex-1 max-w-lg mx-auto w-full px-5 pt-5 pb-28 space-y-4">
+      <main className="flex-1 max-w-2xl mx-auto w-full px-5 pt-5 pb-28 md:pb-10 space-y-4">
 
         {/* Stats */}
         <div className="flex gap-3">
@@ -191,7 +190,6 @@ export default function PerfilPage() {
         </p>
       </main>
 
-      <BottomNav />
     </div>
   );
 }

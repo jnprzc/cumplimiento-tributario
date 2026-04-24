@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { PulsoLogo } from '@/components/PulsoLogo';
-import { BottomNav } from '@/components/BottomNav';
 
 // ─── Check-in questions (weekly pulse, 3 questions) ───────────────────────────
 
@@ -126,7 +125,7 @@ export default function CheckInPage() {
       {done ? (
         <DoneScreen onRepeat={reset} />
       ) : (
-        <div className="flex-1 flex flex-col max-w-lg mx-auto w-full px-6 pt-10 pb-28 animate-fade-in">
+        <div className="flex-1 flex flex-col max-w-2xl mx-auto w-full px-6 pt-10 pb-28 md:pb-10 animate-fade-in">
           {/* Header */}
           <p className="text-xs font-bold text-pulso uppercase tracking-widest mb-4">
             Pregunta {currentIndex + 1} de {CHECKIN_QUESTIONS.length}
@@ -180,7 +179,6 @@ export default function CheckInPage() {
         </div>
       )}
 
-      <BottomNav />
     </div>
   );
 }
