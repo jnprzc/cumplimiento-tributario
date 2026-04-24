@@ -1,10 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import {
-  RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer,
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
-} from 'recharts';
 import { PulsoLogo } from '@/components/PulsoLogo';
 import { ScoreCircle } from '@/components/ScoreCircle';
 import type { DiagnosticResult } from '@/types';
@@ -28,10 +24,123 @@ function radarData(result: DiagnosticResult) {
   ];
 }
 
-function formatHistoryDate(iso: string): string {
+function formatDate(iso: string): string {
   const d = new Date(iso);
   const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
   return `${d.getDate()} ${months[d.getMonth()]}`;
+}
+
+// ─── Native SVG Radar Chart ───────────────────────────────────────────────────
+
+function RadarChartSVG({ data }: { data: { axis: string; value: number }[] }) {
+  const SIZE = 260;
+  const cx = SIZE / 2;
+  const cy = SIZE / 2;
+  const R = 88;
+  const n = data.length;
+
+  function polar(angleDeg: number, r: number) {
+    const a = (angleDeg - 90) * (Math.PI / 180);
+    return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+  }
+
+  const angles = data.map((_, i) => (360 / n) * i);
+  const levels = [25, 50, 75, 100];
+
+  const dataPoints = data.map((d, i) => polar(angles[i], (d.value / 100) * R));
+  const dataPath = dataPoints.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ') + 'Z';
+
+  return (
+    <svg viewBox={`0 0 ${SIZE} ${SIZE}`} width="100%" height={SIZE}>
+      {/* Grid polygons */}
+      {levels.map(level => {
+        const pts = angles.map(a => {
+          const p = polar(a, (level / 100) * R);
+          return `${p.x.toFixed(1)},${p.y.toFixed(1)}`;
+        }).join(' ');
+        return <polygon key={level} points={pts} fill="none" stroke="#e2e8f0" strokeWidth="1" />;
+      })}
+
+      {/* Axis spokes */}
+      {angles.map((angle, i) => {
+        const outer = polar(angle, R);
+        return <line key={i} x1={cx} y1={cy} x2={outer.x.toFixed(1)} y2={outer.y.toFixed(1)}
+          stroke="#e2e8f0" strokeWidth="1" />;
+      })}
+
+      {/* Data fill */}
+      <path d={dataPath} fill="#2D7A4F" fillOpacity="0.25" stroke="#2D7A4F" strokeWidth="2" strokeLinejoin="round" />
+
+      {/* Dots */}
+      {dataPoints.map((p, i) => (
+        <circle key={i} cx={p.x.toFixed(1)} cy={p.y.toFixed(1)} r="4" fill="#2D7A4F" stroke="white" strokeWidth="1.5" />
+      ))}
+
+      {/* Labels */}
+      {data.map((d, i) => {
+        const p = polar(angles[i], R + 22);
+        return (
+          <text key={i} x={p.x.toFixed(1)} y={p.y.toFixed(1)}
+            textAnchor="middle" dominantBaseline="middle"
+            fontSize="10.5" fontWeight="600" fill="#475569">
+            {d.axis}
+          </text>
+        );
+      })}
+    </svg>
+  );
+}
+
+// ─── Native SVG Line Chart ────────────────────────────────────────────────────
+
+function LineChartSVG({ data }: { data: { date: string; score: number }[] }) {
+  const W = 320, H = 180;
+  const pad = { t: 16, r: 16, b: 36, l: 36 };
+  const cw = W - pad.l - pad.r;
+  const ch = H - pad.t - pad.b;
+
+  const xPos = (i: number) =>
+    data.length < 2 ? pad.l + cw / 2 : pad.l + (i / (data.length - 1)) * cw;
+  const yPos = (v: number) => pad.t + ch - (v / 100) * ch;
+
+  const linePath = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${xPos(i).toFixed(1)},${yPos(d.score).toFixed(1)}`).join(' ');
+  const areaPath = linePath + ` L${xPos(data.length - 1).toFixed(1)},${(pad.t + ch).toFixed(1)} L${xPos(0).toFixed(1)},${(pad.t + ch).toFixed(1)} Z`;
+
+  const yTicks = [0, 50, 100];
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%">
+      {/* Y grid + labels */}
+      {yTicks.map(t => (
+        <g key={t}>
+          <line x1={pad.l} y1={yPos(t)} x2={W - pad.r} y2={yPos(t)} stroke="#f1f5f9" strokeWidth="1" />
+          <text x={pad.l - 6} y={yPos(t)} textAnchor="end" dominantBaseline="middle"
+            fontSize="9" fill="#94a3b8">{t}</text>
+        </g>
+      ))}
+
+      {/* X labels */}
+      {data.map((d, i) => (
+        <text key={i} x={xPos(i)} y={H - 8} textAnchor="middle" fontSize="9" fill="#94a3b8">{d.date}</text>
+      ))}
+
+      {/* Area fill */}
+      <path d={areaPath} fill="#2D7A4F" fillOpacity="0.08" />
+
+      {/* Line */}
+      <path d={linePath} fill="none" stroke="#2D7A4F" strokeWidth="2.5"
+        strokeLinecap="round" strokeLinejoin="round" />
+
+      {/* Dots + score labels */}
+      {data.map((d, i) => (
+        <g key={i}>
+          <circle cx={xPos(i)} cy={yPos(d.score)} r="4.5" fill="#2D7A4F" stroke="white" strokeWidth="2" />
+          <text x={xPos(i)} y={yPos(d.score) - 10} textAnchor="middle" fontSize="9.5"
+            fontWeight="700" fill="#2D7A4F">{d.score}</text>
+        </g>
+      ))}
+    </svg>
+  );
 }
 
 // ─── Empty state ──────────────────────────────────────────────────────────────
@@ -40,9 +149,7 @@ function EmptyState() {
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F4F0]">
       <div className="sticky top-0 z-10 bg-white border-b border-slate-100 px-5 py-4">
-        <div className="max-w-2xl mx-auto">
-          <PulsoLogo size="sm" />
-        </div>
+        <div className="max-w-2xl mx-auto"><PulsoLogo size="sm" /></div>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-16 text-center">
         <div className="w-16 h-16 rounded-full bg-pulso-50 flex items-center justify-center mx-auto mb-5">
@@ -82,7 +189,7 @@ export default function DiagnosticoPage() {
   if (!result) return <EmptyState />;
 
   const radar = radarData(result);
-  const historyChart = history.map((h) => ({ date: formatHistoryDate(h.date), score: h.score }));
+  const historyChart = history.map(h => ({ date: formatDate(h.date), score: h.score }));
 
   const LEVEL_COLOR: Record<DiagnosticResult['level'], string> = {
     Crítico:     '#dc2626',
@@ -132,26 +239,10 @@ export default function DiagnosticoPage() {
             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
               Perfil de tu negocio
             </p>
-            <h2 className="text-base font-extrabold text-slate-900 mb-5">Análisis por dimensión</h2>
-            <ResponsiveContainer width="100%" height={260}>
-              <RadarChart data={radar} margin={{ top: 10, right: 20, bottom: 10, left: 20 }}>
-                <PolarGrid stroke="#e2e8f0" />
-                <PolarAngleAxis
-                  dataKey="axis"
-                  tick={{ fontSize: 11, fill: '#64748b', fontWeight: 600 }}
-                />
-                <Radar
-                  name="negocio"
-                  dataKey="value"
-                  stroke="#2D7A4F"
-                  fill="#2D7A4F"
-                  fillOpacity={0.3}
-                  strokeWidth={2}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
-
-            {/* Axis legend */}
+            <h2 className="text-base font-extrabold text-slate-900 mb-4">Análisis por dimensión</h2>
+            <div className="flex justify-center">
+              <RadarChartSVG data={radar} />
+            </div>
             <div className="grid grid-cols-2 gap-2 mt-4">
               {radar.map(({ axis, value }) => (
                 <div key={axis} className="flex items-center justify-between bg-slate-50 rounded-xl px-3 py-2">
@@ -170,10 +261,10 @@ export default function DiagnosticoPage() {
             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
               Evolución
             </p>
-            <h2 className="text-base font-extrabold text-slate-900 mb-5">Historial de puntajes</h2>
+            <h2 className="text-base font-extrabold text-slate-900 mb-4">Historial de puntajes</h2>
 
             {historyChart.length < 2 ? (
-              <div className="flex flex-col items-center justify-center h-[260px] text-center px-4">
+              <div className="flex flex-col items-center justify-center h-48 text-center px-4">
                 <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-3">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                     stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -187,32 +278,14 @@ export default function DiagnosticoPage() {
                 </p>
               </div>
             ) : (
-              <ResponsiveContainer width="100%" height={260}>
-                <LineChart data={historyChart} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                  <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#94a3b8' }} />
-                  <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: '#94a3b8' }} />
-                  <Tooltip
-                    contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 12 }}
-                    formatter={(val) => [`${val ?? ''}`, 'Score']}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="score"
-                    stroke="#2D7A4F"
-                    strokeWidth={2.5}
-                    dot={{ fill: '#2D7A4F', r: 4, strokeWidth: 2, stroke: '#fff' }}
-                    activeDot={{ r: 6 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              <LineChartSVG data={historyChart} />
             )}
 
             {history.length > 0 && (
               <div className="mt-4 flex gap-2 flex-wrap">
                 {history.slice(-5).map((h, i) => (
                   <div key={i} className="flex items-center gap-1.5 bg-slate-50 rounded-xl px-3 py-2">
-                    <span className="text-xs text-slate-500">{formatHistoryDate(h.date)}</span>
+                    <span className="text-xs text-slate-500">{formatDate(h.date)}</span>
                     <span className="text-xs font-bold" style={{
                       color: h.score >= 76 ? '#2D7A4F' : h.score >= 56 ? '#d97706' : '#dc2626',
                     }}>
@@ -231,24 +304,22 @@ export default function DiagnosticoPage() {
             Desglose por categoría
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {(Object.values(result.categoryScores)).map((cat) => {
+            {Object.values(result.categoryScores).map(cat => {
               const pct = Math.round((cat.score / cat.maxScore) * 100);
-              const color = pct >= 70 ? '#2D7A4F' : pct >= 50 ? '#d97706' : '#dc2626';
+              const col = pct >= 70 ? '#2D7A4F' : pct >= 50 ? '#d97706' : '#dc2626';
               return (
                 <div key={cat.label} className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4">
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-sm font-semibold text-slate-800">{cat.emoji} {cat.label}</span>
-                    <span className="text-lg font-extrabold tabular-nums" style={{ color }}>
+                    <span className="text-lg font-extrabold tabular-nums" style={{ color: col }}>
                       {pct}<span className="text-sm font-normal text-slate-400">%</span>
                     </span>
                   </div>
                   <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                     <div className="h-full rounded-full transition-all duration-700"
-                      style={{ width: `${pct}%`, background: color }} />
+                      style={{ width: `${pct}%`, background: col }} />
                   </div>
-                  <p className="text-xs text-slate-400 mt-2">
-                    {cat.score} / {cat.maxScore} puntos
-                  </p>
+                  <p className="text-xs text-slate-400 mt-2">{cat.score} / {cat.maxScore} puntos</p>
                 </div>
               );
             })}
